@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox, DollarSign, FileSignature } from 'lucide-react';
+import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox, DollarSign, FileSignature, Star, Wrench } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { conversationsApi } from '@/lib/api/conversations';
 import { socketClient } from '@/lib/socket';
@@ -65,15 +65,15 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <Home className="h-6 w-6 text-primary" />
+        <Link href="/" className="flex items-center space-x-2" aria-label="HomeMore - Go to homepage">
+          <Home className="h-6 w-6 text-primary" aria-hidden="true" />
           <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             HomeMore
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium" aria-label="Main navigation">
           <Link
             href="/search"
             className="transition-colors hover:text-foreground/80 text-foreground/60"
@@ -85,11 +85,12 @@ export function Header() {
               <Link
                 href="/messages"
                 className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center relative"
+                aria-label={unreadCount > 0 ? `Messages - ${unreadCount} unread` : 'Messages'}
               >
-                <MessageSquare className="h-4 w-4 mr-1" />
+                <MessageSquare className="h-4 w-4 mr-1" aria-hidden="true" />
                 Messages
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold" aria-hidden="true">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -122,6 +123,20 @@ export function Header() {
                 <DollarSign className="h-4 w-4 mr-1" />
                 Payments
               </Link>
+              <Link
+                href="/pending-reviews"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Star className="h-4 w-4 mr-1" />
+                Reviews
+              </Link>
+              <Link
+                href="/my-maintenance"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Wrench className="h-4 w-4 mr-1" />
+                Maintenance
+              </Link>
             </>
           )}
           {isAuthenticated && (
@@ -153,6 +168,13 @@ export function Header() {
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Manage Viewings
+              </Link>
+              <Link
+                href="/landlord-maintenance"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Wrench className="h-4 w-4 mr-1" />
+                Maintenance
               </Link>
             </>
           )}
