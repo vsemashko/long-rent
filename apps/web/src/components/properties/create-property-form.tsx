@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { propertiesApi } from '@/lib/api/properties';
-import { PropertyType, CreatePropertyRequest } from '@/types/property';
+import { PropertyType, CreatePropertyRequest, Property } from '@/types/property';
 import { ChevronLeft, ChevronRight, Upload, X } from 'lucide-react';
 
 const STEPS = [
@@ -51,11 +51,17 @@ const commonAmenities = [
 
 interface PhotoPreview {
   id: string;
-  file: File;
+  file?: File;
   preview: string;
+  url?: string;
 }
 
-export function CreatePropertyForm() {
+interface CreatePropertyFormProps {
+  property?: Property;
+  isEditing?: boolean;
+}
+
+export function CreatePropertyForm({ property, isEditing = false }: CreatePropertyFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
@@ -106,6 +112,59 @@ export function CreatePropertyForm() {
     availableFrom: new Date().toISOString().split('T')[0],
   });
 
+  // Initialize form data when editing
+  useEffect(() => {
+    if (isEditing && property) {
+      setFormData({
+        title: property.title,
+        description: property.description,
+        propertyType: property.propertyType,
+        address: property.address,
+        location: property.location,
+        price: property.price,
+        deposit: property.deposit || 0,
+        utilities: property.utilities || 0,
+        area: property.area || 0,
+        rooms: property.rooms || 1,
+        bedrooms: property.bedrooms || 1,
+        bathrooms: property.bathrooms || 1,
+        floor: property.floor || 0,
+        totalFloors: property.totalFloors || 0,
+        features: property.features || {
+          furnished: false,
+          parking: false,
+          balcony: false,
+          garden: false,
+          elevator: false,
+          airConditioning: false,
+          heating: false,
+          internetIncluded: false,
+          petFriendly: false,
+          accessible: false,
+        },
+        amenities: property.amenities || [],
+        rules: property.rules || {
+          smokingAllowed: false,
+          petsAllowed: false,
+          childrenAllowed: true,
+          partiesAllowed: false,
+          maxOccupants: 2,
+        },
+        availableFrom: property.availableFrom || new Date().toISOString().split('T')[0],
+      });
+
+      // Convert existing photos to PhotoPreview format
+      if (property.photos && property.photos.length > 0) {
+        const existingPhotos: PhotoPreview[] = property.photos.map((photo) => ({
+          id: photo.id,
+          preview: photo.url,
+          url: photo.url,
+        }));
+        setPhotos(existingPhotos);
+      }
+    }
+  }, [isEditing, property]);
+
   const updateFormData = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -153,25 +212,40 @@ export function CreatePropertyForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const property = await propertiesApi.create(formData as CreatePropertyRequest);
+      let savedProperty;
 
-      // Upload photos if any
-      if (photos.length > 0) {
-        for (const photo of photos) {
-          await propertiesApi.uploadPhoto(property.id, photo.file);
+      if (isEditing && property) {
+        // Update existing property
+        savedProperty = await propertiesApi.update(property.id, formData);
+      } else {
+        // Create new property
+        savedProperty = await propertiesApi.create(formData as CreatePropertyRequest);
+      }
+
+      // Upload new photos (only those with file objects)
+      const newPhotos = photos.filter((p) => p.file);
+      if (newPhotos.length > 0) {
+        for (const photo of newPhotos) {
+          if (photo.file) {
+            await propertiesApi.uploadPhoto(savedProperty.id, photo.file);
+          }
         }
       }
 
       toast({
         title: 'Success!',
-        description: 'Your property has been listed successfully.',
+        description: isEditing
+          ? 'Your property has been updated successfully.'
+          : 'Your property has been listed successfully.',
       });
 
-      router.push(`/properties/${property.id}`);
+      router.push(`/properties/${savedProperty.id}`);
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to create property',
+        description:
+          error.response?.data?.message ||
+          `Failed to ${isEditing ? 'update' : 'create'} property`,
         variant: 'destructive',
       });
     } finally {
@@ -707,7 +781,13 @@ export function CreatePropertyForm() {
           </Button>
         ) : (
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Publish Property'}
+            {isSubmitting
+              ? isEditing
+                ? 'Updating...'
+                : 'Creating...'
+              : isEditing
+              ? 'Update Property'
+              : 'Publish Property'}
           </Button>
         )}
       </div>

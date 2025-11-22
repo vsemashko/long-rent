@@ -465,4 +465,31 @@ export class PropertiesService {
 
     return { success: true };
   }
+
+  async updateStatus(propertyId: string, userId: string, status: string) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    }
+
+    if (property.landlordId !== userId) {
+      throw new ForbiddenException('You do not have permission to update this property status');
+    }
+
+    // Validate status
+    const validStatuses = ['DRAFT', 'ACTIVE', 'RENTED', 'ARCHIVED'];
+    if (!validStatuses.includes(status)) {
+      throw new BadRequestException(
+        `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+      );
+    }
+
+    return this.prisma.property.update({
+      where: { id: propertyId },
+      data: { status: status as PropertyStatus },
+    });
+  }
 }

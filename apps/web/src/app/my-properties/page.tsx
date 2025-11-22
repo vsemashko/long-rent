@@ -7,10 +7,18 @@ import Image from 'next/image';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth-store';
 import { propertiesApi } from '@/lib/api/properties';
-import { Property } from '@/types/property';
+import { Property, PropertyStatus } from '@/types/property';
 import {
   Loader2,
   Plus,
@@ -78,6 +86,28 @@ export default function MyPropertiesPage() {
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'Failed to delete property',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      await propertiesApi.updateStatus(id, newStatus);
+      toast({
+        title: 'Success',
+        description: 'Property status updated successfully',
+      });
+      // Update local state
+      setProperties((prev) =>
+        prev.map((prop) =>
+          prop.id === id ? { ...prop, status: newStatus as PropertyStatus } : prop
+        )
+      );
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to update property status',
         variant: 'destructive',
       });
     }
@@ -222,6 +252,27 @@ export default function MyPropertiesPage() {
                         <span>{(property as any)._count.applications} applications</span>
                       </div>
                     )}
+                  </div>
+
+                  {/* Status Selector */}
+                  <div className="mb-3">
+                    <Label htmlFor={`status-${property.id}`} className="text-xs text-muted-foreground mb-1 block">
+                      Status
+                    </Label>
+                    <Select
+                      value={property.status}
+                      onValueChange={(value) => handleStatusChange(property.id, value)}
+                    >
+                      <SelectTrigger id={`status-${property.id}`} className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={PropertyStatus.DRAFT}>Draft</SelectItem>
+                        <SelectItem value={PropertyStatus.ACTIVE}>Active</SelectItem>
+                        <SelectItem value={PropertyStatus.RENTED}>Rented</SelectItem>
+                        <SelectItem value={PropertyStatus.ARCHIVED}>Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Actions */}

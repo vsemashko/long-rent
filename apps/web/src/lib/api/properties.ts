@@ -84,4 +84,12 @@ export const propertiesApi = {
   ): Promise<void> => {
     await apiClient.patch(`/properties/${propertyId}/photos/reorder`, { photos });
   },
+
+  // Update property status
+  updateStatus: async (propertyId: string, status: string): Promise<Property> => {
+    const response = await apiClient.patch<Property>(`/properties/${propertyId}/status`, {
+      status,
+    });
+    return response.data;
+  },
 };

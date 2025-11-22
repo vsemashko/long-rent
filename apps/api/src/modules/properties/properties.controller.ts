@@ -136,4 +136,14 @@ export class PropertiesController {
   ) {
     return this.propertiesService.reorderPhotos(id, req.user.sub, photos);
   }
+
+  @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
+  updateStatus(
+    @Param('id') id: string,
+    @Request() req,
+    @Body('status') status: string
+  ) {
+    return this.propertiesService.updateStatus(id, req.user.sub, status);
+  }
 }
