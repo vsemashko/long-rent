@@ -1,0 +1,24 @@
+# HomeMore - Rental Platform Robots.txt
+
+# Allow all bots to index the public pages
+User-agent: *
+Allow: /
+Allow: /search
+Allow: /how-it-works
+Allow: /properties/*
+
+# Disallow private/authenticated pages
+Disallow: /login
+Disallow: /register
+Disallow: /my-*
+Disallow: /landlord-*
+Disallow: /messages
+Disallow: /favorites
+Disallow: /payments
+Disallow: /pending-reviews
+
+# Disallow API routes
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://homemore.pl/sitemap.xml

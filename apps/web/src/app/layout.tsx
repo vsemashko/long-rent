@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { GoogleAnalytics } from '@/components/analytics/google-analytics';
+import { Mixpanel } from '@/components/analytics/mixpanel';
+import { FocusVisibleIndicator } from '@/components/accessibility/focus-visible-indicator';
 
 export const metadata: Metadata = {
   title: 'HomeMore - Long-term Rental Platform for Poland',
@@ -34,6 +37,9 @@ export default function RootLayout({
   return (
     <html lang="pl" suppressHydrationWarning>
       <body className="font-sans antialiased">
+        <GoogleAnalytics />
+        <Mixpanel />
+        <FocusVisibleIndicator />
         <QueryProvider>
           {children}
           <Toaster />
