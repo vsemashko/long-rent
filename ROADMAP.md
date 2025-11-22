@@ -60,22 +60,24 @@
 ### Sprint 1-2: Core Infrastructure (Weeks 5-8)
 
 #### Backend Foundation
-- [ ] User authentication system (JWT)
-- [ ] User registration API
-- [ ] Login/logout API
-- [ ] Password reset flow
-- [ ] Email verification system
-- [ ] Session management
-- [ ] Rate limiting middleware
-- [ ] Input validation (Zod schemas)
+- [x] User authentication system (JWT)
+- [x] User registration API
+- [x] Login/logout API
+- [x] Password reset flow
+- [x] Email verification system (placeholder - email sending TODO)
+- [x] Session management (refresh token rotation)
+- [x] Rate limiting middleware (ThrottlerGuard)
+- [x] Input validation (class-validator DTOs)
+- [x] User profile management APIs
+- [x] GDPR data export/deletion APIs
 
 #### Database Schema
-- [ ] Users table
-- [ ] Profiles table
-- [ ] Refresh tokens table
-- [ ] Email verification tokens table
-- [ ] Audit logs table
-- [ ] Run Prisma migrations
+- [x] Users table (created in Week 2)
+- [x] Profiles table (created in Week 2)
+- [x] Refresh tokens table (created in Week 2)
+- [x] Email verification tokens table (created in Week 2)
+- [x] Audit logs table (created in Week 2)
+- [ ] Run Prisma migrations (requires database setup)
 
 #### Frontend Foundation
 - [ ] Next.js routing structure
