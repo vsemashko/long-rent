@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { PropertiesModule } from './modules/properties/properties.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
@@ -27,6 +28,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     // Feature modules
     AuthModule,
     UsersModule,
+    PropertiesModule,
   ],
   controllers: [AppController],
   providers: [
