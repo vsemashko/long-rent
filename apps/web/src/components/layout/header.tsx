@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox, DollarSign, FileSignature, Star } from 'lucide-react';
+import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox, DollarSign, FileSignature, Star, Wrench } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { conversationsApi } from '@/lib/api/conversations';
 import { socketClient } from '@/lib/socket';
@@ -129,6 +129,13 @@ export function Header() {
                 <Star className="h-4 w-4 mr-1" />
                 Reviews
               </Link>
+              <Link
+                href="/my-maintenance"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Wrench className="h-4 w-4 mr-1" />
+                Maintenance
+              </Link>
             </>
           )}
           {isAuthenticated && (
@@ -160,6 +167,13 @@ export function Header() {
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Manage Viewings
+              </Link>
+              <Link
+                href="/landlord-maintenance"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Wrench className="h-4 w-4 mr-1" />
+                Maintenance
               </Link>
             </>
           )}
