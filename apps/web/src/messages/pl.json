@@ -1,0 +1,165 @@
+{
+  "common": {
+    "appName": "HomeMore",
+    "tagline": "Więcej niż wynajem. Więcej pewności. Więcej komfortu. Więcej domu.",
+    "search": "Szukaj",
+    "login": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "logout": "Wyloguj",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces"
+  },
+  "navigation": {
+    "search": "Szukaj",
+    "howItWorks": "Jak to działa",
+    "forLandlords": "Dla wynajmujących",
+    "forTenants": "Dla najemców",
+    "about": "O nas",
+    "contact": "Kontakt",
+    "faq": "FAQ"
+  },
+  "home": {
+    "hero": {
+      "title": "HomeMore",
+      "subtitle": "Więcej niż wynajem. Więcej pewności. Więcej komfortu. Więcej domu.",
+      "description": "Pierwsza w Polsce kompleksowa platforma wynajmu długoterminowego. Od wyszukiwania po podpisanie umowy - wszystko w jednym bezpiecznym miejscu.",
+      "findHome": "Znajdź swój dom",
+      "listProperty": "Dodaj ogłoszenie"
+    },
+    "features": {
+      "title": "Dlaczego HomeMore?",
+      "subtitle": "Stworzyliśmy najbardziej kompleksową platformę wynajmu, aby Twoje doświadczenie było bezpieczne, przejrzyste i bezproblemowe.",
+      "verifiedUsers": {
+        "title": "Zweryfikowani użytkownicy",
+        "description": "Wszyscy najemcy i wynajmujący są weryfikowani za pomocą dokumentów tożsamości, sprawdzania przeszłości i opinii."
+      },
+      "digitalContracts": {
+        "title": "Cyfrowe umowy",
+        "description": "Prawnie wiążące podpisy elektroniczne (QES) - bez potrzeby papieru czy wizyt w biurze."
+      },
+      "securePayments": {
+        "title": "Bezpieczne płatności",
+        "description": "Chronione płatności czynszu i kaucji z zarządzaniem escrow i rozwiązywaniem sporów."
+      },
+      "easyScheduling": {
+        "title": "Łatwe planowanie",
+        "description": "Rezerwuj oglądania mieszkań online i otrzymuj natychmiastowe potwierdzenia i przypomnienia."
+      },
+      "reviewsRatings": {
+        "title": "Opinie i oceny",
+        "description": "Przejrzysty system opinii pomaga podejmować świadome decyzje o najemcach i nieruchomościach."
+      },
+      "smartSearch": {
+        "title": "Inteligentne wyszukiwanie",
+        "description": "Zaawansowane filtry, widok mapy i spersonalizowane rekomendacje, aby znaleźć idealne dopasowanie."
+      }
+    },
+    "howItWorks": {
+      "title": "Jak to działa",
+      "tenants": {
+        "title": "Dla najemców",
+        "step1": {
+          "title": "Szukaj i przeglądaj",
+          "description": "Znajdź nieruchomości używając zaawansowanych filtrów i widoku mapy"
+        },
+        "step2": {
+          "title": "Umów oglądanie",
+          "description": "Zaplanuj wizyty w dogodnych terminach"
+        },
+        "step3": {
+          "title": "Aplikuj i weryfikuj",
+          "description": "Złóż aplikację ze zweryfikowanym profilem"
+        },
+        "step4": {
+          "title": "Podpisz i wprowadź się",
+          "description": "Cyfrowe podpisanie umowy i bezpieczna płatność"
+        }
+      },
+      "landlords": {
+        "title": "Dla wynajmujących",
+        "step1": {
+          "title": "Dodaj ogłoszenie",
+          "description": "Stwórz szczegółowe ogłoszenie ze zdjęciami i udogodnieniami"
+        },
+        "step2": {
+          "title": "Sprawdź najemców",
+          "description": "Przejrzyj zweryfikowane profile i aplikacje"
+        },
+        "step3": {
+          "title": "Zarządzaj oglądaniami",
+          "description": "Ustaw dostępność i śledź spotkania"
+        },
+        "step4": {
+          "title": "Podpisz i odbieraj",
+          "description": "Podpisuj umowy elektronicznie i otrzymuj bezpieczne płatności"
+        }
+      }
+    },
+    "cta": {
+      "title": "Gotowy zacząć?",
+      "subtitle": "Dołącz do tysięcy zadowolonych najemców i wynajmujących na HomeMore",
+      "createAccount": "Utwórz darmowe konto",
+      "learnMore": "Dowiedz się więcej"
+    },
+    "devStatus": "🚧 Platforma w trakcie rozwoju - Faza 1 Sprint 1-2: Fundament Frontend"
+  },
+  "auth": {
+    "login": {
+      "title": "Witaj ponownie",
+      "subtitle": "Zaloguj się do swojego konta HomeMore",
+      "email": "Email",
+      "password": "Hasło",
+      "rememberMe": "Zapamiętaj mnie",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "loginButton": "Zaloguj się",
+      "noAccount": "Nie masz konta?",
+      "signUpLink": "Zarejestruj się"
+    },
+    "register": {
+      "title": "Utwórz konto",
+      "subtitle": "Dołącz do HomeMore już dziś",
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
+      "email": "Email",
+      "password": "Hasło",
+      "confirmPassword": "Potwierdź hasło",
+      "accountType": "Jestem",
+      "tenant": "Najemcą",
+      "landlord": "Wynajmującym",
+      "both": "Obu",
+      "terms": "Zgadzam się z Regulaminem i Polityką Prywatności",
+      "registerButton": "Utwórz konto",
+      "haveAccount": "Masz już konto?",
+      "loginLink": "Zaloguj się"
+    },
+    "resetPassword": {
+      "title": "Resetuj hasło",
+      "subtitle": "Wprowadź swój email, aby otrzymać link do resetowania hasła",
+      "email": "Email",
+      "sendLink": "Wyślij link resetujący",
+      "backToLogin": "Powrót do logowania"
+    }
+  },
+  "footer": {
+    "forTenants": "Dla najemców",
+    "forLandlords": "Dla wynajmujących",
+    "company": "Firma",
+    "searchProperties": "Szukaj nieruchomości",
+    "safety": "Bezpieczeństwo",
+    "listProperty": "Dodaj ogłoszenie",
+    "pricing": "Cennik",
+    "resources": "Zasoby",
+    "verification": "Weryfikacja najemców",
+    "aboutUs": "O nas",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfService": "Regulamin",
+    "copyright": "© {year} HomeMore. Wszelkie prawa zastrzeżone. Stworzone z ❤️ w Polsce",
+    "sitemap": "Mapa strony",
+    "cookiePolicy": "Polityka cookies"
+  }
+}

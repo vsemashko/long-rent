@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin', 'latin-ext'] });
+import { Toaster } from '@/components/ui/toaster';
+import { QueryProvider } from '@/components/providers/query-provider';
 
 export const metadata: Metadata = {
   title: 'HomeMore - Long-term Rental Platform for Poland',
@@ -34,10 +33,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pl" suppressHydrationWarning>
-      <body className={inter.className}>
-        <div className="relative min-h-screen flex flex-col">
+      <body className="font-sans antialiased">
+        <QueryProvider>
           {children}
-        </div>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );
