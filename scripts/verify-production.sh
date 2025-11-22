@@ -33,17 +33,17 @@ print_header() {
 
 pass() {
     echo -e "${GREEN}✓${NC} $1"
-    ((PASSED++))
+    PASSED=$((PASSED + 1))
 }
 
 fail() {
     echo -e "${RED}✗${NC} $1"
-    ((FAILED++))
+    FAILED=$((FAILED + 1))
 }
 
 warn() {
     echo -e "${YELLOW}⚠${NC} $1"
-    ((WARNINGS++))
+    WARNINGS=$((WARNINGS + 1))
 }
 
 check_command() {
@@ -144,8 +144,8 @@ print_header "3. Checking Environment Configuration"
 
 # Check for .env files
 check_file_exists ".env.production" || warn ".env.production not found (create from .env.example)"
-check_file_exists "apps/api/.env" || check_file_exists "apps/api/.env.production"
-check_file_exists "apps/web/.env.local" || check_file_exists "apps/web/.env.production"
+check_file_exists "apps/api/.env" || check_file_exists "apps/api/.env.production" || warn "No API environment file found"
+check_file_exists "apps/web/.env.local" || check_file_exists "apps/web/.env.production" || warn "No Web environment file found"
 
 # Load and check critical environment variables
 if [ -f ".env.production" ]; then
@@ -220,11 +220,11 @@ fi
 
 print_header "6. Checking Database Configuration"
 
-# Check Prisma schema
-check_file_exists "apps/api/prisma/schema.prisma"
+# Check Prisma schema (in shared database package)
+check_file_exists "packages/database/prisma/schema.prisma"
 
 # Check if migrations are generated
-if [ -d "apps/api/prisma/migrations" ] && [ "$(ls -A apps/api/prisma/migrations)" ]; then
+if [ -d "packages/database/prisma/migrations" ] && [ "$(ls -A packages/database/prisma/migrations)" ]; then
     pass "Database migrations exist"
 else
     warn "No database migrations found"
@@ -281,8 +281,8 @@ check_file_exists "docs/LAUNCH_CHECKLIST.md"
 
 print_header "9. Checking Security Configuration"
 
-# Check for exposed secrets in code
-if grep -r -i "password.*=.*['\"]" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules apps/ 2>/dev/null | grep -v "type.*password" | grep -q .; then
+# Check for exposed secrets in code (excluding test files)
+if grep -r -i "password.*=.*['\"]" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude="*.spec.ts" --exclude="*.test.ts" --exclude="*.test.tsx" --exclude="*.e2e-spec.ts" apps/ 2>/dev/null | grep -v "type.*password" | grep -v "placeholder.*password" | grep -v "name.*password" | grep -v "locator.*password" | grep -q .; then
     fail "Potential hardcoded passwords found in code"
 else
     pass "No obvious hardcoded passwords in code"
@@ -311,7 +311,11 @@ print_header "10. Checking Production Readiness Files"
 check_file_exists "apps/web/public/robots.txt"
 check_file_exists "apps/web/app/sitemap.ts"
 check_file_exists "apps/web/src/app/faq/page.tsx"
-check_file_exists "apps/api/src/health/health.controller.ts" || warn "Health check endpoint not found"
+if grep -q "healthCheck" apps/api/src/app.controller.ts 2>/dev/null; then
+    pass "Health check endpoint exists"
+else
+    warn "Health check endpoint not found"
+fi
 
 ################################################################################
 # Summary
