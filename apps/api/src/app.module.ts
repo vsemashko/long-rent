@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaModule } from './common/prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PropertiesModule } from './modules/properties/properties.module';
@@ -26,6 +27,9 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
         limit: 100, // 100 requests per minute
       },
     ]),
+
+    // Database
+    PrismaModule,
 
     // Feature modules
     AuthModule,

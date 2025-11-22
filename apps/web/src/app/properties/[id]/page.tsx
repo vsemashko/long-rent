@@ -20,8 +20,10 @@ import {
 } from 'lucide-react';
 import { Property, PropertyType } from '@/types/property';
 import { propertiesApi } from '@/lib/api/properties';
+import { conversationsApi } from '@/lib/api/conversations';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth-store';
+import { RequestViewingDialog } from '@/components/viewings/request-viewing-dialog';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,12 +39,14 @@ export default function PropertyDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, user } = useAuthStore();
 
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [viewingDialogOpen, setViewingDialogOpen] = useState(false);
+  const [isContactingLandlord, setIsContactingLandlord] = useState(false);
 
   useEffect(() => {
     fetchProperty();
@@ -105,6 +109,77 @@ export default function PropertyDetailPage() {
         prev === 0 ? photos.length - 1 : prev - 1
       );
     }
+  };
+
+  const handleContactLandlord = async () => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Login required',
+        description: 'Please login to contact the landlord',
+        variant: 'destructive',
+      });
+      router.push('/login');
+      return;
+    }
+
+    if (!property) return;
+
+    // Don't allow contacting yourself
+    if (property.landlordId === user?.id) {
+      toast({
+        title: 'Cannot contact yourself',
+        description: 'This is your own property',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsContactingLandlord(true);
+
+    try {
+      // Create or find existing conversation
+      const conversation = await conversationsApi.create({
+        participantIds: [property.landlordId],
+        propertyId: property.id,
+      });
+
+      // Navigate to messages with this conversation
+      router.push(`/messages?conversation=${conversation.id}`);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to start conversation',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsContactingLandlord(false);
+    }
+  };
+
+  const handleScheduleViewing = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Login required',
+        description: 'Please login to schedule a viewing',
+        variant: 'destructive',
+      });
+      router.push('/login');
+      return;
+    }
+
+    if (!property) return;
+
+    // Don't allow scheduling viewing for your own property
+    if (property.landlordId === user?.id) {
+      toast({
+        title: 'Cannot schedule viewing',
+        description: 'This is your own property',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setViewingDialogOpen(true);
   };
 
   if (isLoading) {
@@ -359,10 +434,27 @@ export default function PropertyDetailPage() {
                   </div>
                 )}
 
-                <Button className="w-full" size="lg">
-                  Contact Landlord
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleContactLandlord}
+                  disabled={isContactingLandlord}
+                >
+                  {isContactingLandlord ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : (
+                    'Contact Landlord'
+                  )}
                 </Button>
-                <Button variant="outline" className="w-full" size="lg">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                  onClick={handleScheduleViewing}
+                >
                   Schedule Viewing
                 </Button>
 
@@ -374,6 +466,16 @@ export default function PropertyDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Viewing Request Dialog */}
+      {property && (
+        <RequestViewingDialog
+          open={viewingDialogOpen}
+          onOpenChange={setViewingDialogOpen}
+          propertyId={property.id}
+          propertyTitle={property.title}
+        />
+      )}
     </MainLayout>
   );
 }

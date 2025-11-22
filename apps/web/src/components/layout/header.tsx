@@ -1,17 +1,61 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, Plus, Building2, Heart, User, LogOut } from 'lucide-react';
+import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
+import { conversationsApi } from '@/lib/api/conversations';
+import { socketClient } from '@/lib/socket';
 
 export function Header() {
   const router = useRouter();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUnreadCount();
+      setupSocketListeners();
+    } else {
+      setUnreadCount(0);
+    }
+
+    return () => {
+      // Cleanup socket listeners when component unmounts
+      if (socketClient.isConnected()) {
+        socketClient.offNewMessage();
+      }
+    };
+  }, [isAuthenticated]);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const data = await conversationsApi.getUnreadCount();
+      setUnreadCount(data.count);
+    } catch (error) {
+      console.error('Failed to fetch unread count:', error);
+    }
+  };
+
+  const setupSocketListeners = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) return;
+
+    if (!socketClient.isConnected()) {
+      socketClient.connect(accessToken);
+    }
+
+    // Listen for new messages to update unread count
+    socketClient.onNewMessage(() => {
+      fetchUnreadCount();
+    });
+  };
 
   const handleLogout = () => {
     clearAuth();
+    socketClient.disconnect();
     router.push('/');
   };
 
@@ -37,22 +81,52 @@ export function Header() {
             Search
           </Link>
           {isAuthenticated && (
+            <>
+              <Link
+                href="/messages"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center relative"
+              >
+                <MessageSquare className="h-4 w-4 mr-1" />
+                Messages
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/favorites"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Heart className="h-4 w-4 mr-1" />
+                Favorites
+              </Link>
+            </>
+          )}
+          {isAuthenticated && (
             <Link
-              href="/favorites"
-              className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              href="/my-viewings"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              <Heart className="h-4 w-4 mr-1" />
-              Favorites
+              My Viewings
             </Link>
           )}
           {isLandlord && (
-            <Link
-              href="/my-properties"
-              className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
-            >
-              <Building2 className="h-4 w-4 mr-1" />
-              My Properties
-            </Link>
+            <>
+              <Link
+                href="/my-properties"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Building2 className="h-4 w-4 mr-1" />
+                My Properties
+              </Link>
+              <Link
+                href="/landlord-viewings"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Manage Viewings
+              </Link>
+            </>
           )}
           <Link
             href="/how-it-works"

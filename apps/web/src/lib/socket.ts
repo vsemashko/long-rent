@@ -40,6 +40,10 @@ class SocketClient {
     }
   }
 
+  isConnected(): boolean {
+    return this.socket?.connected || false;
+  }
+
   joinConversation(conversationId: string) {
     return new Promise((resolve, reject) => {
       if (!this.socket) {

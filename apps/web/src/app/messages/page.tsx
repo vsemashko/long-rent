@@ -47,7 +47,7 @@ export default function MessagesPage() {
       setConversations(data);
 
       // Auto-select first conversation if none selected
-      if (!selectedConversationId && data.length > 0) {
+      if (!selectedConversationId && data.length > 0 && data[0]) {
         setSelectedConversationId(data[0].id);
       }
     } catch (error) {
@@ -77,6 +77,9 @@ export default function MessagesPage() {
       return 'No messages yet';
     }
     const lastMsg = conversation.messages[0];
+    if (!lastMsg) {
+      return 'No messages yet';
+    }
     const prefix = lastMsg.senderId === user?.id ? 'You: ' : '';
     return prefix + lastMsg.content.substring(0, 50) + (lastMsg.content.length > 50 ? '...' : '');
   };
