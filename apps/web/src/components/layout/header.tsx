@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox } from 'lucide-react';
+import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox, DollarSign, FileSignature } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { conversationsApi } from '@/lib/api/conversations';
 import { socketClient } from '@/lib/socket';
@@ -107,6 +107,20 @@ export function Header() {
               >
                 <FileText className="h-4 w-4 mr-1" />
                 My Applications
+              </Link>
+              <Link
+                href="/my-contracts"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <FileSignature className="h-4 w-4 mr-1" />
+                Contracts
+              </Link>
+              <Link
+                href="/payments"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <DollarSign className="h-4 w-4 mr-1" />
+                Payments
               </Link>
             </>
           )}
