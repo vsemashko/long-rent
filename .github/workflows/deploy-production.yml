@@ -1,0 +1,176 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false # Don't cancel ongoing deployments
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend to Railway
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --service homemore-api
+
+      - name: Run Database Migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd apps/api
+          npx prisma migrate deploy
+
+      - name: Health Check
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+          curl -f ${{ secrets.API_URL }}/health || exit 1
+
+      - name: Notify on Success
+        if: success()
+        run: |
+          echo "✅ Backend deployed successfully to Railway"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ Backend deployment failed"
+
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    needs: deploy-backend # Deploy backend first
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./apps/web
+
+      - name: Health Check
+        run: |
+          echo "Waiting for deployment to propagate..."
+          sleep 30
+          curl -f ${{ secrets.WEB_URL }} || exit 1
+
+      - name: Notify on Success
+        if: success()
+        run: |
+          echo "✅ Frontend deployed successfully to Vercel"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ Frontend deployment failed"
+
+  post-deployment-tests:
+    name: Post-Deployment Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Smoke Tests
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          WEB_URL: ${{ secrets.WEB_URL }}
+        run: |
+          # Backend health check
+          echo "Testing backend health..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" $API_URL/health)
+          if [ $response -eq 200 ]; then
+            echo "✓ Backend health check passed"
+          else
+            echo "✗ Backend health check failed (HTTP $response)"
+            exit 1
+          fi
+
+          # Frontend check
+          echo "Testing frontend..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" $WEB_URL)
+          if [ $response -eq 200 ]; then
+            echo "✓ Frontend check passed"
+          else
+            echo "✗ Frontend check failed (HTTP $response)"
+            exit 1
+          fi
+
+      - name: Send Deployment Notification
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "🚀 Production deployment successful!"
+            echo "Backend: ${{ secrets.API_URL }}"
+            echo "Frontend: ${{ secrets.WEB_URL }}"
+          else
+            echo "⚠️ Production deployment completed with issues"
+          fi
+
+  # Optional: Rollback on failure
+  rollback-on-failure:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend, post-deployment-tests]
+    if: failure() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Rollback Notice
+        run: |
+          echo "⚠️ Deployment failed. Manual rollback may be required."
+          echo "1. Check Railway logs: railway logs"
+          echo "2. Check Vercel logs in dashboard"
+          echo "3. Consider reverting commit if needed"
+          echo "4. Review deployment errors above"
