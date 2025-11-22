@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { CreatePropertyForm } from '@/components/properties/create-property-form';
+import { PhotoGalleryManager } from '@/components/properties/photo-gallery-manager';
+import { Card } from '@/components/ui/card';
 import { useAuthStore } from '@/store/auth-store';
 import { useToast } from '@/hooks/use-toast';
 import { propertiesApi } from '@/lib/api/properties';
@@ -116,8 +118,8 @@ export default function EditPropertyPage() {
 
   return (
     <MainLayout>
-      <div className="container py-8">
-        <div className="mb-8">
+      <div className="container py-8 space-y-8">
+        <div>
           <h1 className="text-4xl font-bold mb-2">Edit Property</h1>
           <p className="text-lg text-muted-foreground">
             Update your property listing details
@@ -125,6 +127,19 @@ export default function EditPropertyPage() {
         </div>
 
         <CreatePropertyForm property={property} isEditing={true} />
+
+        {/* Photo Gallery Management */}
+        {property.photos && (
+          <Card className="p-6">
+            <PhotoGalleryManager
+              propertyId={property.id}
+              initialPhotos={property.photos}
+              onPhotosChange={(newPhotos) => {
+                setProperty({ ...property, photos: newPhotos });
+              }}
+            />
+          </Card>
+        )}
       </div>
     </MainLayout>
   );
