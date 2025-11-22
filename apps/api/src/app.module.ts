@@ -14,6 +14,7 @@ import { ApplicationsModule } from './modules/applications/applications.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ContractsModule } from './modules/contracts/contracts.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
@@ -45,6 +46,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     PaymentsModule,
     ContractsModule,
     ReviewsModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [
