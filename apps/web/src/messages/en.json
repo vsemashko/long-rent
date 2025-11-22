@@ -1,0 +1,165 @@
+{
+  "common": {
+    "appName": "HomeMore",
+    "tagline": "More than renting. More confidence. More comfort. More home.",
+    "search": "Search",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "navigation": {
+    "search": "Search",
+    "howItWorks": "How It Works",
+    "forLandlords": "For Landlords",
+    "forTenants": "For Tenants",
+    "about": "About Us",
+    "contact": "Contact",
+    "faq": "FAQ"
+  },
+  "home": {
+    "hero": {
+      "title": "HomeMore",
+      "subtitle": "More than renting. More confidence. More comfort. More home.",
+      "description": "Poland's first complete platform for long-term rentals. From search to contract signing, everything in one secure place.",
+      "findHome": "Find Your Home",
+      "listProperty": "List Your Property"
+    },
+    "features": {
+      "title": "Why Choose HomeMore?",
+      "subtitle": "We've built the most comprehensive rental platform to make your experience safe, transparent, and hassle-free.",
+      "verifiedUsers": {
+        "title": "Verified Users",
+        "description": "All tenants and landlords are verified with ID, background checks, and reviews."
+      },
+      "digitalContracts": {
+        "title": "Digital Contracts",
+        "description": "Legally binding e-signatures (QES) - no need for paper or office visits."
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Protected rent and deposit payments with escrow management and dispute resolution."
+      },
+      "easyScheduling": {
+        "title": "Easy Scheduling",
+        "description": "Book property viewings online and get instant confirmations and reminders."
+      },
+      "reviewsRatings": {
+        "title": "Reviews & Ratings",
+        "description": "Transparent feedback system helps you make informed decisions about tenants and properties."
+      },
+      "smartSearch": {
+        "title": "Smart Search",
+        "description": "Advanced filters, map view, and personalized recommendations to find your perfect match."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "tenants": {
+        "title": "For Tenants",
+        "step1": {
+          "title": "Search & Browse",
+          "description": "Find properties using advanced filters and map view"
+        },
+        "step2": {
+          "title": "Book Viewing",
+          "description": "Schedule property visits at convenient times"
+        },
+        "step3": {
+          "title": "Apply & Verify",
+          "description": "Submit application with verified profile"
+        },
+        "step4": {
+          "title": "Sign & Move In",
+          "description": "Digital contract signing and secure payment"
+        }
+      },
+      "landlords": {
+        "title": "For Landlords",
+        "step1": {
+          "title": "List Property",
+          "description": "Create detailed listing with photos and amenities"
+        },
+        "step2": {
+          "title": "Screen Tenants",
+          "description": "Review verified profiles and applications"
+        },
+        "step3": {
+          "title": "Manage Viewings",
+          "description": "Set availability and track appointments"
+        },
+        "step4": {
+          "title": "Sign & Collect",
+          "description": "E-sign contracts and receive secure payments"
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Join thousands of satisfied tenants and landlords on HomeMore",
+      "createAccount": "Create Free Account",
+      "learnMore": "Learn More"
+    },
+    "devStatus": "🚧 Platform under development - Phase 1 Sprint 1-2: Frontend Foundation"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Login to your HomeMore account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Login",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join HomeMore today",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "accountType": "I am a",
+      "tenant": "Tenant",
+      "landlord": "Landlord",
+      "both": "Both",
+      "terms": "I agree to the Terms of Service and Privacy Policy",
+      "registerButton": "Create Account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to receive a password reset link",
+      "email": "Email",
+      "sendLink": "Send Reset Link",
+      "backToLogin": "Back to login"
+    }
+  },
+  "footer": {
+    "forTenants": "For Tenants",
+    "forLandlords": "For Landlords",
+    "company": "Company",
+    "searchProperties": "Search Properties",
+    "safety": "Safety & Security",
+    "listProperty": "List Your Property",
+    "pricing": "Pricing",
+    "resources": "Resources",
+    "verification": "Tenant Verification",
+    "aboutUs": "About Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "copyright": "© {year} HomeMore. All rights reserved. Made with ❤️ in Poland",
+    "sitemap": "Sitemap",
+    "cookiePolicy": "Cookie Policy"
+  }
+}
