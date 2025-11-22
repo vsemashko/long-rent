@@ -24,6 +24,10 @@ import { conversationsApi } from '@/lib/api/conversations';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth-store';
 import { RequestViewingDialog } from '@/components/viewings/request-viewing-dialog';
+import { ApplyPropertyDialog } from '@/components/applications/apply-property-dialog';
+import { applicationsApi } from '@/lib/api/applications';
+import { Badge } from '@/components/ui/badge';
+import { Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,7 +50,10 @@ export default function PropertyDetailPage() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [viewingDialogOpen, setViewingDialogOpen] = useState(false);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
   const [isContactingLandlord, setIsContactingLandlord] = useState(false);
+  const [applicantCount, setApplicantCount] = useState(0);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     fetchProperty();
@@ -57,6 +64,22 @@ export default function PropertyDetailPage() {
       const data = await propertiesApi.getById(params.id as string);
       setProperty(data);
       setIsFavorite(data.isFavorite || false);
+
+      // Fetch applicant count
+      if (isAuthenticated) {
+        try {
+          const countData = await applicationsApi.getApplicationCount(params.id as string);
+          setApplicantCount(countData.count);
+
+          // Check if current user has already applied
+          const myApplications = await applicationsApi.getMyApplications();
+          const alreadyApplied = myApplications.some(app => app.propertyId === params.id);
+          setHasApplied(alreadyApplied);
+        } catch (error) {
+          // Ignore errors fetching application data
+          console.error('Error fetching application data:', error);
+        }
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -180,6 +203,41 @@ export default function PropertyDetailPage() {
     }
 
     setViewingDialogOpen(true);
+  };
+
+  const handleApplyNow = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Login required',
+        description: 'Please login to apply for this property',
+        variant: 'destructive',
+      });
+      router.push('/login');
+      return;
+    }
+
+    if (!property) return;
+
+    // Don't allow applying to your own property
+    if (property.landlordId === user?.id) {
+      toast({
+        title: 'Cannot apply',
+        description: 'This is your own property',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (hasApplied) {
+      toast({
+        title: 'Already applied',
+        description: 'You have already submitted an application for this property',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setApplyDialogOpen(true);
   };
 
   if (isLoading) {
@@ -437,6 +495,23 @@ export default function PropertyDetailPage() {
                 <Button
                   className="w-full"
                   size="lg"
+                  onClick={handleApplyNow}
+                  disabled={hasApplied}
+                >
+                  {hasApplied ? 'Already Applied' : 'Apply Now'}
+                </Button>
+
+                {applicantCount > 0 && (
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    <span>{applicantCount} active applicant{applicantCount !== 1 ? 's' : ''}</span>
+                  </div>
+                )}
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
                   onClick={handleContactLandlord}
                   disabled={isContactingLandlord}
                 >
@@ -472,6 +547,16 @@ export default function PropertyDetailPage() {
         <RequestViewingDialog
           open={viewingDialogOpen}
           onOpenChange={setViewingDialogOpen}
+          propertyId={property.id}
+          propertyTitle={property.title}
+        />
+      )}
+
+      {/* Apply Property Dialog */}
+      {property && (
+        <ApplyPropertyDialog
+          open={applyDialogOpen}
+          onOpenChange={setApplyDialogOpen}
           propertyId={property.id}
           propertyTitle={property.title}
         />
