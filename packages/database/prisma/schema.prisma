@@ -290,20 +290,26 @@ model Viewing {
 
 enum ApplicationStatus {
   PENDING
+  UNDER_REVIEW
   ACCEPTED
   REJECTED
   WITHDRAWN
 }
 
 model RentalApplication {
-  id         String            @id @default(uuid())
-  propertyId String            @map("property_id")
-  tenantId   String            @map("tenant_id")
-  status     ApplicationStatus @default(PENDING)
-  message    String?           @db.Text
-  moveInDate DateTime?         @map("move_in_date")
-  createdAt  DateTime          @default(now()) @map("created_at")
-  updatedAt  DateTime          @updatedAt @map("updated_at")
+  id              String            @id @default(uuid())
+  propertyId      String            @map("property_id")
+  tenantId        String            @map("tenant_id")
+  status          ApplicationStatus @default(PENDING)
+  message         String?           @db.Text
+  moveInDate      DateTime?         @map("move_in_date")
+  employmentInfo  Json?             @map("employment_info") // Job title, employer, income
+  referencesInfo  Json?             @map("references_info") // Previous landlord references
+  additionalInfo  Json?             @map("additional_info") // Pets, smoking preferences, etc.
+  landlordNotes   String?           @db.Text @map("landlord_notes")
+  reviewedAt      DateTime?         @map("reviewed_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   // Relations
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -312,6 +318,7 @@ model RentalApplication {
   @@index([propertyId])
   @@index([tenantId])
   @@index([status])
+  @@index([createdAt])
   @@map("rental_applications")
 }
 
