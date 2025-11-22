@@ -2,10 +2,10 @@ import { IsString, IsUUID, IsDateString, IsOptional, IsEnum } from 'class-valida
 
 export class CreateViewingDto {
   @IsUUID()
-  propertyId: string;
+  propertyId!: string;
 
   @IsDateString()
-  scheduledAt: string;
+  scheduledAt!: string;
 
   @IsOptional()
   @IsString()

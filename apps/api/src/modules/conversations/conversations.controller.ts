@@ -19,29 +19,29 @@ export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
   @Post()
-  create(@Request() req, @Body() createConversationDto: CreateConversationDto) {
+  create(@Request() req: any, @Body() createConversationDto: CreateConversationDto) {
     return this.conversationsService.createConversation(req.user.sub, createConversationDto);
   }
 
   @Get()
-  getUserConversations(@Request() req) {
+  getUserConversations(@Request() req: any) {
     return this.conversationsService.getUserConversations(req.user.sub);
   }
 
   @Get('unread-count')
-  getUnreadCount(@Request() req) {
+  getUnreadCount(@Request() req: any) {
     return this.conversationsService.getUnreadCount(req.user.sub);
   }
 
   @Get(':id')
-  getConversation(@Param('id') id: string, @Request() req) {
+  getConversation(@Param('id') id: string, @Request() req: any) {
     return this.conversationsService.getConversation(id, req.user.sub);
   }
 
   @Post(':id/messages')
   sendMessage(
     @Param('id') id: string,
-    @Request() req,
+    @Request() req: any,
     @Body() sendMessageDto: SendMessageDto
   ) {
     return this.conversationsService.sendMessage(id, req.user.sub, sendMessageDto);
@@ -49,7 +49,7 @@ export class ConversationsController {
 
   @Post(':id/mark-read')
   @HttpCode(HttpStatus.OK)
-  markAsRead(@Param('id') id: string, @Request() req) {
+  markAsRead(@Param('id') id: string, @Request() req: any) {
     return this.conversationsService.markAsRead(id, req.user.sub);
   }
 }
