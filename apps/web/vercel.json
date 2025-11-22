@@ -1,0 +1,15 @@
+{
+  "buildCommand": "cd ../.. && npm run build --filter=web",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "cd ../.. && npm install",
+  "framework": "nextjs",
+  "regions": ["fra1"],
+  "functions": {
+    "app/**/*.{ts,tsx}": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "crons": []
+}
