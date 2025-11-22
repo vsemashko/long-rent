@@ -129,6 +129,10 @@ export interface PropertySearchFilters {
     east: number;
     west: number;
   };
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface PropertySearchResponse {

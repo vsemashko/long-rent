@@ -92,15 +92,17 @@ export default function PropertyDetailPage() {
   };
 
   const nextPhoto = () => {
-    if (property?.photos) {
-      setCurrentPhotoIndex((prev) => (prev + 1) % property.photos.length);
+    if (property?.photos && property.photos.length > 0) {
+      const photos = property.photos;
+      setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
     }
   };
 
   const prevPhoto = () => {
-    if (property?.photos) {
+    if (property?.photos && property.photos.length > 0) {
+      const photos = property.photos;
       setCurrentPhotoIndex((prev) =>
-        prev === 0 ? property.photos.length - 1 : prev - 1
+        prev === 0 ? photos.length - 1 : prev - 1
       );
     }
   };
@@ -128,7 +130,7 @@ export default function PropertyDetailPage() {
         {/* Image Gallery */}
         <div className="mb-8">
           <div className="relative h-[500px] rounded-lg overflow-hidden bg-muted">
-            {hasPhotos ? (
+            {hasPhotos && photos[currentPhotoIndex] ? (
               <>
                 <Image
                   src={photos[currentPhotoIndex].url}

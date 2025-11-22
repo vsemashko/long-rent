@@ -11,13 +11,18 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { SearchPropertyDto } from './dto/search-property.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('properties')
 export class PropertiesController {
@@ -75,5 +80,60 @@ export class PropertiesController {
   @UseGuards(JwtAuthGuard)
   toggleFavorite(@Param('id') id: string, @Request() req) {
     return this.propertiesService.toggleFavorite(id, req.user.sub);
+  }
+
+  @Post(':id/photos')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/properties',
+        filename: (req, file, cb) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB
+      },
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    })
+  )
+  uploadPhoto(
+    @Param('id') id: string,
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('caption') caption?: string
+  ) {
+    return this.propertiesService.uploadPhoto(id, req.user.sub, file, caption);
+  }
+
+  @Delete(':id/photos/:photoId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deletePhoto(
+    @Param('id') id: string,
+    @Param('photoId') photoId: string,
+    @Request() req
+  ) {
+    return this.propertiesService.deletePhoto(id, photoId, req.user.sub);
+  }
+
+  @Patch(':id/photos/reorder')
+  @UseGuards(JwtAuthGuard)
+  reorderPhotos(
+    @Param('id') id: string,
+    @Request() req,
+    @Body('photos') photos: { id: string; order: number }[]
+  ) {
+    return this.propertiesService.reorderPhotos(id, req.user.sub, photos);
   }
 }

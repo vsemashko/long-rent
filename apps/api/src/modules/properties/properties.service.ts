@@ -368,4 +368,101 @@ export class PropertiesService {
       isFavorite: true,
     }));
   }
+
+  // Photo management methods
+  async uploadPhoto(
+    propertyId: string,
+    userId: string,
+    file: Express.Multer.File,
+    caption?: string
+  ) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+      include: { photos: true },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    }
+
+    if (property.landlordId !== userId) {
+      throw new ForbiddenException('You do not have permission to upload photos to this property');
+    }
+
+    // TODO: Upload to S3 and get real URL
+    // For now, create a placeholder URL
+    const url = `/uploads/properties/${propertyId}/${file.filename}`;
+
+    // Get the next order number
+    const maxOrder = property.photos.length > 0
+      ? Math.max(...property.photos.map(p => p.order))
+      : -1;
+
+    return this.prisma.propertyPhoto.create({
+      data: {
+        propertyId,
+        url,
+        caption,
+        order: maxOrder + 1,
+      },
+    });
+  }
+
+  async deletePhoto(propertyId: string, photoId: string, userId: string) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    }
+
+    if (property.landlordId !== userId) {
+      throw new ForbiddenException('You do not have permission to delete photos from this property');
+    }
+
+    const photo = await this.prisma.propertyPhoto.findUnique({
+      where: { id: photoId },
+    });
+
+    if (!photo || photo.propertyId !== propertyId) {
+      throw new NotFoundException(`Photo with ID ${photoId} not found`);
+    }
+
+    // TODO: Delete from S3
+
+    return this.prisma.propertyPhoto.delete({
+      where: { id: photoId },
+    });
+  }
+
+  async reorderPhotos(
+    propertyId: string,
+    userId: string,
+    photos: { id: string; order: number }[]
+  ) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    }
+
+    if (property.landlordId !== userId) {
+      throw new ForbiddenException('You do not have permission to reorder photos for this property');
+    }
+
+    // Update all photo orders in a transaction
+    await this.prisma.$transaction(
+      photos.map((photo) =>
+        this.prisma.propertyPhoto.update({
+          where: { id: photo.id },
+          data: { order: photo.order },
+        })
+      )
+    );
+
+    return { success: true };
+  }
 }
