@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare } from 'lucide-react';
+import { Home, Menu, Plus, Building2, Heart, User, LogOut, MessageSquare, FileText, Inbox } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { conversationsApi } from '@/lib/api/conversations';
 import { socketClient } from '@/lib/socket';
@@ -101,6 +101,13 @@ export function Header() {
                 <Heart className="h-4 w-4 mr-1" />
                 Favorites
               </Link>
+              <Link
+                href="/my-applications"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                My Applications
+              </Link>
             </>
           )}
           {isAuthenticated && (
@@ -119,6 +126,13 @@ export function Header() {
               >
                 <Building2 className="h-4 w-4 mr-1" />
                 My Properties
+              </Link>
+              <Link
+                href="/landlord-applications"
+                className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center"
+              >
+                <Inbox className="h-4 w-4 mr-1" />
+                Applications
               </Link>
               <Link
                 href="/landlord-viewings"
